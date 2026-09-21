@@ -1,16 +1,16 @@
 ---
 name: wordpress-cost-calculator-builder
 description: >-
-  Generates production-grade, highly localized, copy-and-paste WordPress cost calculators (HTML/CSS/JS)
+  Generates production-grade, highly localized, standalone copy-and-paste WordPress cost calculators (HTML/CSS/JS)
   based on minimal user inputs (Location, Calculator Keyword, Color Codes, Font Family, Container Width).
-  Includes deep logo color extraction, mandatory centered titles, optional location badge revocation,
-  strict #FFFFFF background, text-only space-compressed pill controls, 5-second auto-close/minimize results card
-  with hover pause, itemized line items, visual breakdown, click-to-call consultation CTA, print PDF support, and automated minification.
+  Includes deep logo color extraction, mandatory centered titles, strict #FFFFFF background, concise unclipped dropdowns,
+  modal lightbox results overlay with Astra-immune circular close button, 5-second auto-close countdown with hover pause,
+  itemized line items, visual cost bar, direct Contact Us & click-to-call CTAs, isolated 1-page PDF print engine, and automated minification.
 ---
 
 # Global WordPress Cost Calculator Builder Skill
 
-This skill provides an autonomous end-to-end framework to build high-converting, localized, standalone WordPress cost calculator widgets for any trade, service, product, or industry.
+This skill provides an autonomous end-to-end framework to build high-converting, localized, standalone WordPress cost calculator widgets for any trade, service, product, or industry (roofing, concrete, HVAC, plumbing, solar, remodeling, commercial services).
 
 ---
 
@@ -20,100 +20,170 @@ When creating, updating, or generating any WordPress cost calculator, ALWAYS enf
 
 ### A. Deep Logo Color Analysis & Dual-Color Harmony
 - **Visual Inspection**: Thoroughly inspect the target website's logo image and extract the exact primary and secondary color palette (Hex codes).
-- **Brand System**:
+- **Brand System Mapping**:
   - **Primary Logo Color**: Apply to primary action buttons, active tab/segmented pill backgrounds, header titles, focus borders, and main breakdown bar segments.
-  - **Secondary Logo Color**: Apply to active pill bottom accent indicators (`border-bottom: 3px solid`), secondary borders, badge highlights, legend tags, and CTA accents.
+  - **Secondary Logo Color**: Apply to badges, highlight accents, active tab borders/indicators, legend tags, and secondary action elements.
 
-### B. Centered Header Section & Location Badge Revocation
-- **Centering (STRICT MANDATE)**: The header block (Main Calculator Title and Subtitle) **MUST ALWAYS be centered** (`text-align: center; margin: 0 auto;`).
-- **Location Badge**: Optional location badge above the title can be included or revoked/removed per user preference while keeping the title and subtitle centered.
+### B. Centered Header Section (STRICT MANDATE)
+- **Centering**: The header block (Main Calculator Title and Subtitle) **MUST ALWAYS be centered** (`text-align: center; margin: 0 auto;`).
+- **Location Badge**: Optional location badge above the title can be included or removed per user preference while keeping the title centered.
 - **Forbidden**: NEVER left-align or right-align the top calculator header title block.
 
 ### C. Calculator Container Background (STRICT MANDATE)
 - **Background Color**: You MUST **ONLY use `#FFFFFF`** (Pure White) as the background color code for all calculator containers (`background: #FFFFFF;` or `--card-bg: #FFFFFF;`).
 - **Forbidden**: NEVER use grey (`#F8FAFC`, `#F1F5F9`), dark, or tinted backgrounds for the main calculator container box.
 
-### D. Text-Only Option Pills & Ultra-Compressed Space Mode
-- **Text-Only Option Pills**: Segmented pill selectors (Factor 1 & Factor 3) support clean, text-only styling without icons to eliminate unnecessary vertical height.
-- **Space Compression**: Compress button padding (`8px 10px`), gap spacing (`6px`), and form margins to maximize screen real-estate efficiency.
-
-### E. Universal Container Bounds
+### D. Universal Container Bounds
 - **Container Max-Width**: Default MUST ALWAYS be `max-width: 100%` for fluid, flawless responsive rendering across PC header right areas, sidebars, body contents, and mobile viewports.
 
 ---
 
-## 2. Minimal User Inputs Required
+## 2. Input Form Controls & Layout Best Practices
 
-When the user provides minimal input, extract or request the following key variables:
+### A. Concise, Unclipped Dropdown Options (< 35 Characters)
+In narrow hero right columns or sidebar containers (~280px–340px), verbose dropdown option labels get truncated with `...` by the browser.
+- **Rule**: Keep all `<option>` text concise, plain-English, and under 35 characters so the label is 100% visible before the dropdown arrow.
+- **Example**:
+  - *Poor*: `Class 4 Impact-Resistant (Hail-Rated • Omaha Top Pick • ~$6.40/sq.ft)` (Truncates to `Class 4 Impact-Resistant (Hail-...`)
+  - *Best*: `Class 4 Impact (Hail Resistant)` (32 chars — fits cleanly in all viewports).
 
-| Input Variable | Description / Example | Default Value (If Unspecified) |
-| :--- | :--- | :--- |
-| **Location** | City, Zip, or Region (e.g., `Barrie, ON`) | `Barrie, ON` (COLA: 1.08x) |
-| **Calculator Keyword** | Target SEO Keyword (e.g., `Concrete Cost Calculator Barrie`) | Prompt or infer from user context |
-| **Color Palette** | Primary & Secondary Logo Hex Codes | Extracted from logo image |
-| **Font Family** | Google Font or standard font stack | `'Poppins', sans-serif` |
-| **Container Width** | Max-width constraint for fluid responsive layout | `max-width: 100%` |
+### B. Stacked Custom Area / Dimension Entries
+- Never put dropdown presets and custom numeric inputs in narrow 50/50 side-by-side columns.
+- Use a **full-width stacked layout**:
+  1. Full-width preset dropdown on top.
+  2. Direct custom entry card below with an input field, right suffix tag (`sq ft`), and an adjacent counter pill (`24 Squares`).
 
 ---
 
-## 3. Standard Operational Workflow
+## 3. Results Architecture: Lightbox Modal Pop-Up Protocol
+
+When the user requests a pop-up modal or lightbox results window, enforce the following architecture:
+
+### A. Strictly Hidden by Default on Page Load
+- The modal overlay MUST have `display: none !important;` in CSS and inline `style="display: none !important;"` to prevent themes or CSS transitions from displaying it prematurely on load.
+- It is activated exclusively via `.jbr-modal-active { display: flex !important; }` when the user clicks the "Calculate" button.
+
+### B. Astra / WordPress Theme-Immune Close Button
+Themes like Astra inject global styles onto `<button>` elements (`padding: 15px 30px; border-radius: 4px; font-size: 16px;`). To guarantee a pristine circular close button:
+```css
+.jbr-modal-dialog .jbr-close-modal-btn,
+button.jbr-close-modal-btn,
+.jbr-close-modal-btn {
+  all: unset !important;
+  box-sizing: border-box !important;
+  width: 34px !important;
+  height: 34px !important;
+  min-width: 34px !important;
+  max-width: 34px !important;
+  min-height: 34px !important;
+  max-height: 34px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: #F1F5F9 !important;
+  border: 1.5px solid #CBD5E1 !important;
+  border-radius: 50% !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  color: #1E293B !important;
+  transition: all 0.2s ease !important;
+}
+```
+
+### C. 5-Second Auto-Close Countdown with Hover Pause
+- Top countdown progress bar shrinks from 100% to 0% over 5 seconds (5000ms).
+- `onmouseenter="bccPauseTimer()"` pauses the countdown when the user hovers over the dialog.
+- `onmouseleave="bccResumeTimer()"` resumes the countdown.
+- Dismissible via click on backdrop overlay and `Escape` key listener.
+
+---
+
+## 4. Isolated 1-Page PDF Print Engine (`jbrPrintEstimate`)
+
+Calling generic `window.print()` from a WordPress / Elementor page often prints 10–16 pages of website clutter and splits the estimate card across pages. 
+
+### Implementation Standard:
+When the user clicks "Print PDF", dynamically inject an isolated print document into a hidden `<iframe>`:
+```javascript
+window.jbrPrintEstimate = function() {
+  var totalPrice = document.getElementById('jbr-total-price').textContent;
+  var rangePrice = document.getElementById('jbr-range-price').textContent;
+  var unitSqft = document.getElementById('jbr-unit-sqft').textContent;
+  var unitSquare = document.getElementById('jbr-unit-square').textContent;
+  
+  var printHtml = '<!DOCTYPE html><html><head><meta charset="utf-8">' +
+    '<title>Official Estimate - ' + totalPrice + '</title>' +
+    '<style>' +
+    '@page { size: letter portrait; margin: 10mm 12mm; }' +
+    '* { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }' +
+    'body { margin: 0; padding: 0; color: #0F172A; background: #FFF; font-size: 12.5px; line-height: 1.38; }' +
+    '.quote-card { border: 2px solid #1E293B; border-radius: 10px; padding: 20px 24px; max-width: 680px; margin: 0 auto; }' +
+    '/* Clean header, specs bar, hero price box, itemized breakdown, and contact CTA */' +
+    '</style></head><body>' +
+    '<div class="quote-card">' +
+      '<!-- Clean 1-Page Quote Body -->' +
+    '</div></body></html>';
+
+  var printFrame = document.getElementById('jbr-print-iframe');
+  if (!printFrame) {
+    printFrame = document.createElement('iframe');
+    printFrame.id = 'jbr-print-iframe';
+    printFrame.style.position = 'fixed';
+    printFrame.style.right = '0';
+    printFrame.style.bottom = '0';
+    printFrame.style.width = '0';
+    printFrame.style.height = '0';
+    printFrame.style.border = '0';
+    document.body.appendChild(printFrame);
+  }
+
+  var frameDoc = printFrame.contentWindow || printFrame.contentDocument;
+  if (frameDoc.document) frameDoc = frameDoc.document;
+  frameDoc.open();
+  frameDoc.write(printHtml);
+  frameDoc.close();
+
+  setTimeout(function() {
+    printFrame.contentWindow.focus();
+    printFrame.contentWindow.print();
+  }, 250);
+};
+```
+- **Guaranteed Output**: Exactly **Page 1 of 1** letter-sized PDF estimate.
+- **Omission**: Automatically strips the close button, countdown bar, and website chrome.
+
+---
+
+## 5. Direct Conversion CTA Group
+
+In the results modal / output card, provide high-converting lead actions:
+1. **Contact Us Button**: Direct link to the client's booking or contact page (e.g., `https://[client-domain]/contact/`).
+2. **Direct Phone Call Button**: One-tap phone link (`tel:[phone]`).
+3. **Print PDF Button**: One-click 1-page estimate generator.
+
+---
+
+## 6. Standard Operational Workflow
 
 ```mermaid
 flowchart TD
     A["1. User Request & Logo Analysis"] --> B["2. Web Search & Local Rate Grounding"]
     B --> C["3. Python Math Test Harness & Verification"]
-    C --> D["4. Generate Formatted HTML/CSS/JS Snippet"]
-    D --> E["5. Generate Minified WordPress Copy-Paste Code"]
+    C --> D["4. Standalone HTML/CSS/JS Generation (Snippet)"]
+    D --> E["5. Automated Minification Pipeline"]
+    E --> F["6. Deploy / Git Remote Sync"]
 ```
 
-### Step 1: Web Search & Local Rate Grounding
-Use `search_web` to retrieve localized cost metrics for the target keyword in the specified location:
-- Local Trade Labor Hourly Rate (e.g., Concrete contractor/Glazier/Electrician baseline).
-- Material Unit Rates (Base materials, premium tiers, addons).
-- Local Building Codes & Regional Factors.
+### Step 1: Web Search & Rate Grounding
+Extract hourly labor rates, material square foot pricing, and local permit fees.
 
-### Step 2: Math Verification via Python Test Harness
-Create a python script in scratch (e.g., `verify_[service]_calculator.py`) using `write_to_file`, then execute it using `run_command`:
-- Verify all formula outputs, range bounds (Min: -10%, Max: +12%), unit subtotals, and edge cases.
-- Confirm Exit Code 0 before generating frontend HTML code.
+### Step 2: Math Verification Harness
+Verify formula calculations using a Python test harness before generating HTML.
+$$\text{Total} = \left[ \left(\text{Quantity} \times \text{Material Rate} \times \text{Multiplier}\right) \times \text{Regional Factor} \right] + \text{Permits}$$
 
-### Step 3: Standalone WordPress Code Generation (`-snippet.html`)
-Build a 100% self-contained module containing:
-1. **Centered Header**: Title, subtitle, and optional location badge.
-2. **Streamlined 3-Factor Input Controls**:
-   - Factor 1: Service / Project Type (Text-Only or Icon Segmented Pill Buttons)
-   - Factor 2: Size / Scope (Interactive Slider with quick preset chips)
-   - Factor 3: Thickness & Finish Tier (Text-Only or Icon Pill Selector)
-3. **Ultra-Simple & High-Impact Results Display**:
-   - Hero Price Display: Bold total investment price, estimated range, and unit rate.
-   - Clean 4-Line Item Breakdown: Itemized list with subtotals.
-   - Phone CTA Banner: Click-to-call contact box for direct lead conversion (`📞 Call Now`).
-4. **Interactive 5-Second Auto-Close Results Card**:
-   - Initial state: `style="display: none;"`
-   - Trigger: Clicking **"Calculate Cost"** button displays card, scrolls smoothly into view, and starts `bccStartTimer()`.
-   - Countdown Progress Bar: Top animated bar shrinking from 100% to 0% over 5 seconds (5000ms).
-   - Hover Pause: `onmouseenter="bccPauseTimer()"` pauses timer, `onmouseleave="bccResumeTimer()"` resumes timer.
-   - Manual Close: Includes `✖ Minimize` button calling `bccCloseResults()`.
+### Step 3: Standalone Code Generation
+Produce clean, self-contained HTML/CSS/JS without external CDN dependencies.
 
-### Step 4: Automated Minification Pipeline (`-minified.html`)
-Write a python minification script (e.g., `minify_[service].py`) that strips comments and unnecessary whitespace from HTML, CSS, and JS. Run via `run_command` and present both Option 1 (Minified Code) and Option 2 (Formatted Code).
-
----
-
-## 4. Standardized Multi-Vector Pricing Formula
-
-$$\text{Total Investment} = \left[ \left( \text{Base Material Rate} \times \text{Quantity/Area} \times \text{Finish Multiplier} \right) + \text{Design Cost} + \text{Utility Cost} + \text{Permit Fee} \right] \times \text{Regional COLA Multiplier}$$
-
-Where:
-- **Min Estimate**: $\text{Total} \times 0.92$
-- **Max Estimate**: $\text{Total} \times 1.12$
-- **Unit Metric**: $\text{Total} / \text{Quantity or Sq.Ft.}$
-
----
-
-## 5. Output Deliverable Formatting Guide
-
-When presenting the output to the user, always provide:
-1. **Option 1: Compressed / Minified WordPress Code**: Wrapped in a single ````html ```` block ready for copy-pasting into Gutenberg / Elementor / Divi.
-2. **Option 2: Formatted Code**: Cleanly indented code with inline comments for users who wish to customize field options or pricing constants.
-3. **Local Scratch File References**: Links to `[service]-snippet.html` and `[service]-minified.html`.
+### Step 4: Automated Minification Pipeline
+Write a Python script to compress HTML, CSS, and JS into a copy-and-paste single block for WordPress Gutenberg / Elementor HTML widgets.
