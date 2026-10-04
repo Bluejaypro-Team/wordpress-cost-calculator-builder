@@ -47,11 +47,22 @@ In narrow hero right columns or sidebar containers (~280px–340px), verbose dro
   - *Poor*: `Class 4 Impact-Resistant (Hail-Rated • Omaha Top Pick • ~$6.40/sq.ft)` (Truncates to `Class 4 Impact-Resistant (Hail-...`)
   - *Best*: `Class 4 Impact (Hail Resistant)` (32 chars — fits cleanly in all viewports).
 
-### B. Stacked Custom Area / Dimension Entries
-- Never put dropdown presets and custom numeric inputs in narrow 50/50 side-by-side columns.
-- Use a **full-width stacked layout**:
-  1. Full-width preset dropdown on top.
-  2. Direct custom entry card below with an input field, right suffix tag (`sq ft`), and an adjacent counter pill (`24 Squares`).
+### B. Dropdown-First Surface Area Pattern & 2-Column Anti-Truncation Grid
+- **Surface Area as Dropdown**: When collecting area or project scope, prefer an all-dropdown interface over horizontal chip buttons. In narrow hero right columns (~280px–360px), multi-button chip rows get squeezed and truncate into unreadable fragments (e.g., `Chimney (8...`, `Small Wall (...`).
+  - Provide standard scope options with clear square footage benchmarks (e.g. `Chimney Stack (~80 sq ft)`, `Standard Wall (~250 sq ft)`).
+  - Include a `Custom Area (Enter sq ft)...` option that smoothly toggles a numeric stepper `[-] [ 250 ] sq ft [+]` directly below the dropdown.
+- **2-Column Responsive Grid Mandate**: In hero columns and sidebars (~440px–600px wide), NEVER use a 3-column dropdown row (`repeat(3, 1fr)`), which squashes dropdowns into ~140px width and forces text to truncate with ellipses (`Exterior Brick ..`, `Moderate Eros..`).
+  - Enforce a balanced **2-column grid** (`@container gtam-widget (min-width: 440px) { grid-template-columns: repeat(2, 1fr); gap: 12px 14px; }`).
+  - Each dropdown receives 240px+ of width, ensuring 100% full text visibility without any truncation.
+  - Automatically collapses to 1 column on narrow mobile screens (< 440px).
+
+### C. Elementor & WordPress Theme-Immune Dropdowns (STRICT ANTI-CLIPPING MANDATE)
+Themes like Astra, Divi, and Elementor inject fixed heights (e.g. `height: 38px !important;` or `height: 40px;`) onto `<select>` and `<input>`. Applying vertical padding (`padding: 12px ... 12px`) pushes the text down so that the bottom half of the letters is cut off!
+- **Mandatory Anti-Clipping Rule**:
+  - Always enforce **ZERO vertical padding** (`padding: 0 36px 0 12px !important;`).
+  - Set explicit matching height and line-height: `height: 42px !important; min-height: 42px !important; max-height: 42px !important; line-height: 40px !important;`.
+  - Always specify `box-sizing: border-box !important; vertical-align: middle !important; display: block !important; overflow: hidden !important; text-overflow: ellipsis !important;`.
+  - This guarantees 100% vertical centering and eliminates text clipping across all themes.
 
 ---
 
@@ -97,6 +108,16 @@ button.jbr-close-modal-btn,
 - `onmouseleave="bccResumeTimer()"` resumes the countdown.
 - Dismissible via click on backdrop overlay and `Escape` key listener.
 
+### D. Mobile & Tablet Modal Viewport Fit Protocol
+In WordPress mobile viewports (e.g. Elementor mobile preview ~360px–480px width, 600px–750px height), large popups easily exceed the viewport, pushing action buttons off screen.
+- **Total Modal Height Mandate**: Keep mobile modal height compact (**~360px–380px** total) so 100% of the popup—including specifications table and conversion buttons—fits on screen without clipping or forced scrolling.
+- **Dual Side-by-Side Mobile CTAs**: NEVER stack action buttons into a single 1-column layout on mobile. Stacking creates ~160px of vertical button height!
+  - Always enforce **side-by-side dual buttons** (`grid-template-columns: 1fr 1fr !important; gap: 5px;`) for primary actions (e.g., "Book Inspection" alongside direct phone number).
+  - Keeps button height to ~34px, saving ~75px of vertical screen real estate.
+- **Compact Specs Table & Allocation Bar**:
+  - Cell padding `2.5px 6px` and font size `10px` on mobile (< 600px).
+  - Allocation bar height `5px` with a 2x2 compact legend grid (`gap: 2px 6px`).
+- **Circular Close Button**: Sized to `26px × 26px` with `top: 8px; right: 8px;` on mobile for effortless fingertip closing.
 ---
 
 ## 4. Isolated 1-Page PDF Print Engine (`jbrPrintEstimate`)
