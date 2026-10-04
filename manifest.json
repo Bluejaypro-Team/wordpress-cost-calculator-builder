@@ -1,0 +1,17 @@
+{
+  "name": "wordpress-cost-calculator-builder",
+  "version": "1.2.0",
+  "status": "installed",
+  "disabled": false,
+  "error": null,
+  "description": "Generates production-grade, highly localized, standalone copy-and-paste WordPress cost calculators (HTML/CSS/JS) based on minimal user inputs (Location, Calculator Keyword, Color Codes, Font Family, Container Width). Includes deep logo color extraction, mandatory centered header block (location badge, title, subtitle), strict #FFFFFF background, concise unclipped dropdowns (< 35 chars), hidden-by-default custom stepper with +/- increments, 2-column anti-truncation grid, modal lightbox results overlay with Astra-immune circular close button, 5-second auto-close countdown with hover pause, anti-cascade specificity protocol (zero inline display:none blocking), itemized line items, visual proportional cost bar, direct Contact Us & click-to-call CTAs, isolated 1-page PDF print engine, 100% valid JSON-LD schema, and automated minification.",
+  "author": "Bluejaypro Telemetry & Conversion Engineering Team",
+  "entrypoint": "SKILL.md",
+  "skills": {
+    "wordpress-cost-calculator-builder": {
+      "status": "installed",
+      "disabled": false,
+      "error": null
+    }
+  }
+}
