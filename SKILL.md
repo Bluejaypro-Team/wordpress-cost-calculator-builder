@@ -5,12 +5,12 @@ description: >-
   based on minimal user inputs (Location, Calculator Keyword, Color Codes, Font Family, Container Width).
   Includes deep logo color extraction, mandatory centered titles, strict #FFFFFF background, concise unclipped dropdowns,
   modal lightbox results overlay with Astra-immune circular close button, 5-second auto-close countdown with hover pause,
-  itemized line items, visual cost bar, direct Contact Us & click-to-call CTAs, isolated 1-page PDF print engine, and automated minification.
+  anti-cascade specificity protocol (zero inline display:none blocking), itemized line items, visual cost bar, direct Contact Us & click-to-call CTAs, isolated 1-page PDF print engine, and automated minification.
 ---
 
 # Global WordPress Cost Calculator Builder Skill
 
-This skill provides an autonomous end-to-end framework to build high-converting, localized, standalone WordPress cost calculator widgets for any trade, service, product, or industry (roofing, concrete, HVAC, plumbing, solar, remodeling, commercial services).
+This skill provides an autonomous end-to-end framework to build high-converting, localized, standalone WordPress cost calculator widgets for any trade, service, product, or industry (roofing, masonry, concrete, HVAC, plumbing, solar, remodeling, commercial services).
 
 ---
 
@@ -49,10 +49,14 @@ In narrow hero right columns or sidebar containers (~280px–340px), verbose dro
 
 ### B. Dropdown-First Surface Area Pattern & 2-Column Anti-Truncation Grid
 - **Surface Area as Dropdown**: When collecting area or project scope, prefer an all-dropdown interface over horizontal chip buttons. In narrow hero right columns (~280px–360px), multi-button chip rows get squeezed and truncate into unreadable fragments (e.g., `Chimney (8...`, `Small Wall (...`).
-  - Provide standard scope options with clear square footage benchmarks (e.g. `Chimney Stack (~80 sq ft)`, `Standard Wall (~250 sq ft)`).
+  - Provide standard scope options with clear square footage benchmarks (e.g., `Chimney Stack (~80 sq ft)`, `Standard Wall (~250 sq ft)`).
   - Include a `Custom Area (Enter sq ft)...` option that smoothly toggles a numeric stepper `[-] [ 250 ] sq ft [+]` directly below the dropdown.
+- **Custom Stepper Hidden by Default Protocol**:
+  - In CSS, define `.gtam-stepper-wrap { display: none; ... }` (never set `display: flex !important;` on the base class).
+  - Define `.gtam-stepper-wrap.gtam-stepper-active { display: flex !important; }`.
+  - In JavaScript `onAreaSelectChange()`, toggle the `.gtam-stepper-active` class and explicitly call `style.setProperty('display', 'flex', 'important')` when "custom" is selected, and `style.setProperty('display', 'none', 'important')` on preset options.
 - **2-Column Responsive Grid Mandate**: In hero columns and sidebars (~440px–600px wide), NEVER use a 3-column dropdown row (`repeat(3, 1fr)`), which squashes dropdowns into ~140px width and forces text to truncate with ellipses (`Exterior Brick ..`, `Moderate Eros..`).
-  - Enforce a balanced **2-column grid** (`@container gtam-widget (min-width: 440px) { grid-template-columns: repeat(2, 1fr); gap: 12px 14px; }`).
+  - Enforce a balanced **2-column grid** (`@container gtam-widget (min-width: 440px) { grid-template-columns: repeat(2, 1fr) !important; gap: 12px 14px !important; }`).
   - Each dropdown receives 240px+ of width, ensuring 100% full text visibility without any truncation.
   - Automatically collapses to 1 column on narrow mobile screens (< 440px).
 
@@ -70,24 +74,92 @@ Themes like Astra, Divi, and Elementor inject fixed heights (e.g. `height: 38px 
 
 When the user requests a pop-up modal or lightbox results window, enforce the following architecture:
 
-### A. Strictly Hidden by Default on Page Load
-- The modal overlay MUST have `display: none !important;` in CSS and inline `style="display: none !important;"` to prevent themes or CSS transitions from displaying it prematurely on load.
-- It is activated exclusively via `.jbr-modal-active { display: flex !important; }` when the user clicks the "Calculate" button.
+### A. Anti-Cascade Specificity Protocol (CRITICAL FIX FOR "RESULTS NOT SHOWING")
+- **NEVER use inline `style="display: none !important;"` on the overlay HTML tag**:
+  - In W3C CSS cascading specificity, an inline style with `!important` (specificity 1-0-0-0) completely overrides any stylesheet rule (such as `.jbr-modal-active { display: flex !important; }` with specificity 0-1-1-0).
+  - An inline `display: none !important;` will permanently trap the modal in a hidden state, causing user clicks on "Calculate Estimate" to fail silently.
+- **Mandatory Clean HTML Tag**:
+  ```html
+  <div id="gtam-modal-overlay" onclick="gtamOnOverlayClick(event)">
+  ```
+- **Mandatory Base CSS**:
+  ```css
+  #gtam-modal-overlay {
+    display: none !important; /* STRICT: Hidden by default */
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: rgba(15, 23, 42, 0.72) !important;
+    backdrop-filter: blur(4px) !important;
+    -webkit-backdrop-filter: blur(4px) !important;
+    z-index: 99999999 !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 10px !important;
+    box-sizing: border-box !important;
+  }
 
-### B. Astra / WordPress Theme-Immune Close Button
+  #gtam-modal-overlay.jbr-modal-active {
+    display: flex !important;
+    animation: gtamFadeIn 0.2s ease-out forwards !important;
+  }
+  ```
+- **Mandatory JavaScript Launch & Dismiss Pattern**:
+  ```javascript
+  // On Launch:
+  var overlay = document.getElementById('gtam-modal-overlay');
+  if (overlay) {
+    overlay.style.removeProperty('display');
+    overlay.style.setProperty('display', 'flex', 'important');
+    overlay.classList.add('jbr-modal-active');
+  }
+  document.body.style.overflow = 'hidden';
+
+  // On Dismiss:
+  var overlay = document.getElementById('gtam-modal-overlay');
+  if (overlay) {
+    overlay.classList.remove('jbr-modal-active');
+    overlay.style.removeProperty('display');
+    overlay.style.setProperty('display', 'none', 'important');
+  }
+  document.body.style.overflow = '';
+  ```
+
+### B. Dynamic Cost Bar Allocation Recalculation
+- Ensure `computeEstimate()` and modal launch dynamically calculate and set the exact percentage widths (`%`) on the breakdown segments (`Materials`, `Labor`, `Prep`, `Rigging/Access`):
+  ```javascript
+  var matPct = Math.round((data.materials / data.target) * 100);
+  var laborPct = Math.round((data.labor / data.target) * 100);
+  var prepPct = Math.round((data.prep / data.target) * 100);
+  var accessPct = Math.max(0, 100 - (matPct + laborPct + prepPct));
+
+  if (barMat) barMat.style.width = matPct + '%';
+  if (barLabor) barLabor.style.width = laborPct + '%';
+  if (barPrep) barPrep.style.width = prepPct + '%';
+  if (barAccess) barAccess.style.width = accessPct + '%';
+  ```
+
+### C. Astra / WordPress Theme-Immune Close Button
 Themes like Astra inject global styles onto `<button>` elements (`padding: 15px 30px; border-radius: 4px; font-size: 16px;`). To guarantee a pristine circular close button:
 ```css
-.jbr-modal-dialog .jbr-close-modal-btn,
+#gtam-modal-dialog .jbr-close-modal-btn,
 button.jbr-close-modal-btn,
 .jbr-close-modal-btn {
   all: unset !important;
   box-sizing: border-box !important;
-  width: 34px !important;
-  height: 34px !important;
-  min-width: 34px !important;
-  max-width: 34px !important;
-  min-height: 34px !important;
-  max-height: 34px !important;
+  position: absolute !important;
+  top: 10px !important;
+  right: 10px !important;
+  width: 30px !important;
+  height: 30px !important;
+  min-width: 30px !important;
+  max-width: 30px !important;
+  min-height: 30px !important;
+  max-height: 30px !important;
   padding: 0 !important;
   margin: 0 !important;
   background: #F1F5F9 !important;
@@ -98,19 +170,26 @@ button.jbr-close-modal-btn,
   justify-content: center !important;
   cursor: pointer !important;
   color: #1E293B !important;
-  transition: all 0.2s ease !important;
+  transition: all 0.18s ease !important;
+  z-index: 10 !important;
+}
+
+#gtam-modal-dialog .jbr-close-modal-btn:hover {
+  background: #E2E8F0 !important;
+  color: #0F172A !important;
+  transform: scale(1.06) !important;
 }
 ```
 
-### C. 5-Second Auto-Close Countdown with Hover Pause
+### D. 5-Second Auto-Close Countdown with Hover Pause
 - Top countdown progress bar shrinks from 100% to 0% over 5 seconds (5000ms).
 - `onmouseenter="bccPauseTimer()"` pauses the countdown when the user hovers over the dialog.
 - `onmouseleave="bccResumeTimer()"` resumes the countdown.
 - Dismissible via click on backdrop overlay and `Escape` key listener.
 
-### D. Mobile & Tablet Modal Viewport Fit Protocol
-In WordPress mobile viewports (e.g. Elementor mobile preview ~360px–480px width, 600px–750px height), large popups easily exceed the viewport, pushing action buttons off screen.
-- **Total Modal Height Mandate**: Keep mobile modal height compact (**~360px–380px** total) so 100% of the popup—including specifications table and conversion buttons—fits on screen without clipping or forced scrolling.
+### E. Mobile & Tablet Modal Viewport Fit Protocol
+In WordPress mobile viewports (e.g., Elementor mobile preview ~360px–480px width, 600px–750px height), large popups easily exceed the viewport, pushing action buttons off screen.
+- **Total Modal Height Mandate**: Keep mobile modal height compact (**~358px–380px** total) so 100% of the popup—including specifications table and conversion buttons—fits on screen without clipping or forced scrolling.
 - **Dual Side-by-Side Mobile CTAs**: NEVER stack action buttons into a single 1-column layout on mobile. Stacking creates ~160px of vertical button height!
   - Always enforce **side-by-side dual buttons** (`grid-template-columns: 1fr 1fr !important; gap: 5px;`) for primary actions (e.g., "Book Inspection" alongside direct phone number).
   - Keeps button height to ~34px, saving ~75px of vertical screen real estate.
@@ -118,38 +197,36 @@ In WordPress mobile viewports (e.g. Elementor mobile preview ~360px–480px widt
   - Cell padding `2.5px 6px` and font size `10px` on mobile (< 600px).
   - Allocation bar height `5px` with a 2x2 compact legend grid (`gap: 2px 6px`).
 - **Circular Close Button**: Sized to `26px × 26px` with `top: 8px; right: 8px;` on mobile for effortless fingertip closing.
+
 ---
 
 ## 4. Isolated 1-Page PDF Print Engine (`jbrPrintEstimate`)
 
-Calling generic `window.print()` from a WordPress / Elementor page often prints 10–16 pages of website clutter and splits the estimate card across pages. 
+Calling generic `window.print()` from a WordPress / Elementor page prints website clutter and splits the estimate card across pages. 
 
 ### Implementation Standard:
 When the user clicks "Print PDF", dynamically inject an isolated print document into a hidden `<iframe>`:
 ```javascript
 window.jbrPrintEstimate = function() {
-  var totalPrice = document.getElementById('jbr-total-price').textContent;
-  var rangePrice = document.getElementById('jbr-range-price').textContent;
-  var unitSqft = document.getElementById('jbr-unit-sqft').textContent;
-  var unitSquare = document.getElementById('jbr-unit-square').textContent;
-  
+  var data = window.gtamCalcEngine.cachedData || computeEstimate();
+
   var printHtml = '<!DOCTYPE html><html><head><meta charset="utf-8">' +
-    '<title>Official Estimate - ' + totalPrice + '</title>' +
+    '<title>Official Estimate - ' + data.target.toLocaleString() + ' CAD</title>' +
     '<style>' +
     '@page { size: letter portrait; margin: 10mm 12mm; }' +
     '* { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }' +
-    'body { margin: 0; padding: 0; color: #0F172A; background: #FFF; font-size: 12.5px; line-height: 1.38; }' +
-    '.quote-card { border: 2px solid #1E293B; border-radius: 10px; padding: 20px 24px; max-width: 680px; margin: 0 auto; }' +
-    '/* Clean header, specs bar, hero price box, itemized breakdown, and contact CTA */' +
+    'body { margin: 0; padding: 0; color: #0F172A; background: #FFFFFF; font-size: 12px; line-height: 1.35; }' +
+    '.quote-card { border: 2px solid #18293F; border-radius: 10px; padding: 20px 24px; max-width: 680px; margin: 0 auto; }' +
+    '/* Clean header, specs table, hero price box, itemized breakdown, and contact footer */' +
     '</style></head><body>' +
     '<div class="quote-card">' +
       '<!-- Clean 1-Page Quote Body -->' +
     '</div></body></html>';
 
-  var printFrame = document.getElementById('jbr-print-iframe');
+  var printFrame = document.getElementById('gtam-print-iframe');
   if (!printFrame) {
     printFrame = document.createElement('iframe');
-    printFrame.id = 'jbr-print-iframe';
+    printFrame.id = 'gtam-print-iframe';
     printFrame.style.position = 'fixed';
     printFrame.style.right = '0';
     printFrame.style.bottom = '0';
@@ -168,7 +245,7 @@ window.jbrPrintEstimate = function() {
   setTimeout(function() {
     printFrame.contentWindow.focus();
     printFrame.contentWindow.print();
-  }, 250);
+  }, 300);
 };
 ```
 - **Guaranteed Output**: Exactly **Page 1 of 1** letter-sized PDF estimate.
@@ -193,7 +270,8 @@ flowchart TD
     B --> C["3. Python Math Test Harness & Verification"]
     C --> D["4. Standalone HTML/CSS/JS Generation (Snippet)"]
     D --> E["5. Automated Minification Pipeline"]
-    E --> F["6. Deploy / Git Remote Sync"]
+    E --> F["6. Verification Suite (verify_calculator.py)"]
+    F --> G["7. Deploy / Git Remote Sync"]
 ```
 
 ### Step 1: Web Search & Rate Grounding
@@ -204,7 +282,19 @@ Verify formula calculations using a Python test harness before generating HTML.
 $$\text{Total} = \left[ \left(\text{Quantity} \times \text{Material Rate} \times \text{Multiplier}\right) \times \text{Regional Factor} \right] + \text{Permits}$$
 
 ### Step 3: Standalone Code Generation
-Produce clean, self-contained HTML/CSS/JS without external CDN dependencies.
+Produce clean, self-contained HTML/CSS/JS without external CDN dependencies. Enforce the anti-cascade specificity rules (no inline `display: none !important;`).
 
 ### Step 4: Automated Minification Pipeline
 Write a Python script to compress HTML, CSS, and JS into a copy-and-paste single block for WordPress Gutenberg / Elementor HTML widgets.
+
+### Step 5: Dual Verification Suite (`verify_calculator.py`)
+Run automated assertions across both the formatted snippet and the minified production file:
+- Dropdown options strictly < 35 characters
+- Header title centered ONLY (no rogue location badge or subtitle unless explicitly requested)
+- Background `#FFFFFF` (Pure White)
+- 2x2 responsive grid (`repeat(2, 1fr)`)
+- Direct phone and contact URLs
+- Astra-immune circular close button
+- 5-second countdown with hover pause
+- Isolated 1-page print engine
+- 100% valid JSON-LD schema markup
