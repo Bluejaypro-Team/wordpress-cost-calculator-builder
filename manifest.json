@@ -1,10 +1,10 @@
 {
   "name": "wordpress-cost-calculator-builder",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "status": "installed",
   "disabled": false,
   "error": null,
-  "description": "Generates production-grade, highly localized, standalone copy-and-paste WordPress cost calculators (HTML/CSS/JS) based on minimal user inputs (Location, Calculator Keyword, Color Codes, Font Family, Container Width). Includes deep logo color extraction, mandatory centered header block (location badge, title, subtitle), strict #FFFFFF background, concise unclipped dropdowns (< 35 chars), hidden-by-default custom stepper with +/- increments, 2-column anti-truncation grid, modal lightbox results overlay with Astra-immune circular close button, 5-second auto-close countdown with hover pause, anti-cascade specificity protocol (zero inline display:none blocking), itemized line items, visual proportional cost bar, direct Contact Us & click-to-call CTAs, isolated 1-page PDF print engine, 100% valid JSON-LD schema, and automated minification.",
+  "description": "Generates production-grade, highly localized, standalone copy-and-paste WordPress cost calculators (HTML/CSS/JS) optimized for header right, desktop, tablet, and mobile viewports. Features deep logo color extraction, centered title-only header block (badges/subtitles omitted), strict #FFFFFF background, all-dropdown text-type architecture with concise options (< 35 chars), hidden-by-default custom stepper (+/- increments), container-query 2-column anti-truncation grid, lightbox results modal with Astra-immune circular close button, 5-second auto-close countdown with hover pause, anti-cascade specificity protocol (zero inline display:none blocking), itemized line items, visual proportional cost bar, dual side-by-side conversion CTAs (Book Free Site Walk + Call Direct), revoked print bloat, 100% valid JSON-LD schema, and automated minification.",
   "author": "Bluejaypro Telemetry & Conversion Engineering Team",
   "entrypoint": "SKILL.md",
   "skills": {
